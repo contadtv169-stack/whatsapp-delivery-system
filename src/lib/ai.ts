@@ -1,5 +1,6 @@
 import GroqSDK from "groq-sdk"
 import { getConfig, formatPrompt } from "./config"
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions"
 
 let groq: GroqSDK | null = null
 
@@ -40,7 +41,7 @@ function formatarCardapioParaMensagem(): string {
   return msg
 }
 
-export async function gerarRespostaIA(mensagem: string, historico: {role: string, content:string}[] = []): Promise<string> {
+export async function gerarRespostaIA(mensagem: string, historico: ChatCompletionMessageParam[] = []): Promise<string> {
   const config = getConfig()
   const client = getGroq()
 
@@ -57,7 +58,7 @@ export async function gerarRespostaIA(mensagem: string, historico: {role: string
 
   const cardapioTexto = montarCardapioTexto()
 
-  const messages: { role: string; content: string }[] = [
+  const messages: ChatCompletionMessageParam[] = [
     { role: "system", content: `${promptSistema}\n\n${cardapioTexto}` },
     ...historico.slice(-10),
     { role: "user", content: mensagem },

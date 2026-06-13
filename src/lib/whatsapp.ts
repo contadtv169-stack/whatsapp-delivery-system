@@ -1,10 +1,11 @@
 import { getConfig } from "./config"
 import { gerarRespostaIA, getMensagemCardapio, getMensagemAvaliacao, getMensagemPagamento, getMensagemBemVindo } from "./ai"
 import { textToSpeech } from "./elevenlabs"
+import type { ChatCompletionMessageParam } from "groq-sdk/resources/chat/completions"
 
 interface ClienteSessao {
   numero: string
-  historico: { role: string; content: string }[]
+  historico: ChatCompletionMessageParam[]
   etapa: "saudacao" | "cardapio" | "pedido" | "pagamento" | "avaliacao"
   ultimaAtividade: Date
   pedidoAtual: { nome: string; quantidade: number }[]
