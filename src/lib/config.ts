@@ -7,13 +7,31 @@ const CONFIG_PATH = path.join(process.cwd(), "server.yml")
 
 let cachedConfig: Config | null = null
 
+function applyEnvOverrides(config: Config): Config {
+  const env = process.env
+  return {
+    ...config,
+    groq: { ...config.groq, api_key: env.GROQ_API_KEY || config.groq.api_key },
+    elevenlabs: { ...config.elevenlabs, api_key: env.ELEVENLABS_API_KEY || config.elevenlabs.api_key },
+    pagamento: {
+      ...config.pagamento,
+      kryptpay: {
+        ...config.pagamento.kryptpay,
+        ci: env.KRYPTPAY_CI || config.pagamento.kryptpay.ci,
+        cs: env.KRYPTPAY_CS || config.pagamento.kryptpay.cs,
+      },
+    },
+    admin: { ...config.admin, senha: env.ADMIN_SENHA || config.admin.senha },
+  }
+}
+
 export function loadConfig(): Config {
   if (cachedConfig) return cachedConfig
 
   const raw = fs.readFileSync(CONFIG_PATH, "utf-8")
   const parsed = yaml.load(raw) as Config
-  cachedConfig = parsed
-  return parsed
+  cachedConfig = applyEnvOverrides(parsed)
+  return cachedConfig
 }
 
 export function getConfig(): Config {
