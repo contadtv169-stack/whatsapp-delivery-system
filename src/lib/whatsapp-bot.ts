@@ -1,5 +1,3 @@
-"use server"
-
 import { Client, LocalAuth, MessageMedia } from "whatsapp-web.js"
 import * as qrcode from "qrcode"
 import { EventEmitter } from "events"
