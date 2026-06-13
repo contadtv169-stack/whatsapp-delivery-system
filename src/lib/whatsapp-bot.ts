@@ -48,7 +48,7 @@ export async function iniciarBot(): Promise<void> {
   })
 
   client.on("message", async (msg) => {
-    if (msg.from === "status@broadcast" || msg.isGroup) return
+    if (msg.from === "status@broadcast" || msg.from.endsWith("@g.us")) return
 
     const numero = msg.from
     const texto = msg.body
