@@ -48,7 +48,6 @@ export async function iniciarBot(): Promise<void> {
         "--disable-extensions",
       ],
     },
-    restartOnAuthFail: true,
   })
 
   client.on("qr", async (qr: string) => {
