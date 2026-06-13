@@ -84,7 +84,7 @@ export default function AdminDashboard() {
             { id: "config", label: "Configurações" },
             { id: "whatsapp", label: "WhatsApp" },
             { id: "cardapio", label: "Cardápio" },
-            { id: "ia", label: "IA & Voz" },
+            { id: "groq", label: "Groq & Voz" },
             { id: "empresa", label: "Empresa" },
             { id: "avaliacoes", label: "Avaliações" },
           ].map((tab) => (
@@ -143,15 +143,15 @@ export default function AdminDashboard() {
           </div>
         )}
 
-        {activeTab === "ia" && (
+        {activeTab === "groq" && (
           <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
-            <h2 className="text-xl font-bold mb-4">🧠 IA & 🎙️ Voz</h2>
-            <h3 className="font-semibold text-gray-700 mt-4">OpenAI</h3>
+            <h2 className="text-xl font-bold mb-4">🧠 Groq & 🎙️ Voz</h2>
+            <h3 className="font-semibold text-gray-700 mt-4">Groq (IA)</h3>
             {[
-              ["ia.api_key", "API Key OpenAI", config.ia?.api_key],
-              ["ia.model", "Modelo", config.ia?.model],
-              ["ia.temperatura", "Temperatura", config.ia?.temperatura?.toString()],
-              ["ia.max_tokens", "Max Tokens", config.ia?.max_tokens?.toString()],
+              ["groq.api_key", "API Key Groq", config.groq?.api_key],
+              ["groq.model", "Modelo (ex: llama-3.3-70b-versatile)", config.groq?.model],
+              ["groq.temperatura", "Temperatura", config.groq?.temperatura?.toString()],
+              ["groq.max_tokens", "Max Tokens", config.groq?.max_tokens?.toString()],
             ].map(([path, label, value]) => (
               <div key={path}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
@@ -166,8 +166,8 @@ export default function AdminDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Prompt do Sistema</label>
               <textarea
-                value={config.ia?.prompt_sistema || ""}
-                onChange={(e) => setConfig(updateNested(config, "ia.prompt_sistema", e.target.value))}
+                value={config.groq?.prompt_sistema || ""}
+                onChange={(e) => setConfig(updateNested(config, "groq.prompt_sistema", e.target.value))}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
               />
             </div>

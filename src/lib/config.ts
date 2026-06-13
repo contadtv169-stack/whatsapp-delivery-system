@@ -5,7 +5,7 @@ import path from "path"
 import yaml from "js-yaml"
 import type { Config } from "@/types"
 
-const CONFIG_PATH = path.join(process.cwd(), "config", "config.yaml")
+const CONFIG_PATH = path.join(process.cwd(), "server.yml")
 
 let cachedConfig: Config | null = null
 

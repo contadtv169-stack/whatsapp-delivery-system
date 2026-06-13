@@ -1,16 +1,15 @@
-import OpenAI from "openai"
+import GroqSDK from "groq-sdk"
 import { getConfig, formatPrompt } from "./config"
-import type { Categoria } from "@/types"
 
-let openai: OpenAI | null = null
+let groq: GroqSDK | null = null
 
-function getOpenAI(): OpenAI | null {
+function getGroq(): GroqSDK | null {
   const config = getConfig()
-  if (!config.ia.api_key) return null
-  if (!openai) {
-    openai = new OpenAI({ apiKey: config.ia.api_key })
+  if (!config.groq.api_key) return null
+  if (!groq) {
+    groq = new GroqSDK({ apiKey: config.groq.api_key })
   }
-  return openai
+  return groq
 }
 
 function montarCardapioTexto(): string {
@@ -43,13 +42,13 @@ function formatarCardapioParaMensagem(): string {
 
 export async function gerarRespostaIA(mensagem: string, historico: {role: string, content:string}[] = []): Promise<string> {
   const config = getConfig()
-  const client = getOpenAI()
+  const client = getGroq()
 
   if (!client) {
     return `🧑‍💼 *Atendimento ${config.empresa.nome}*\n\nNo momento não temos IA disponível. Um atendente humano irá te atender em breve!\n\nEnquanto isso, digite *cardápio* para ver nosso cardápio.`
   }
 
-  const promptSistema = formatPrompt(config.ia.prompt_sistema, {
+  const promptSistema = formatPrompt(config.groq.prompt_sistema, {
     nome: config.empresa.nome,
     descricao: config.empresa.descricao,
     telefone: config.empresa.telefone,
@@ -66,10 +65,10 @@ export async function gerarRespostaIA(mensagem: string, historico: {role: string
 
   try {
     const response = await client.chat.completions.create({
-      model: config.ia.model || "gpt-4o-mini",
+      model: config.groq.model || "llama-3.3-70b-versatile",
       messages,
-      temperature: config.ia.temperatura || 0.7,
-      max_tokens: config.ia.max_tokens || 300,
+      temperature: config.groq.temperatura || 0.7,
+      max_tokens: config.groq.max_tokens || 300,
     })
 
     return response.choices[0]?.message?.content || "Desculpe, não entendi. Pode repetir?"

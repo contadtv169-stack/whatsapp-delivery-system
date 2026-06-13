@@ -29,10 +29,9 @@ elevenlabs:
   stability: 0.5
   similarity_boost: 0.75
 
-ia:
-  provider: "openai"
+groq:
   api_key: ""
-  model: "gpt-4o-mini"
+  model: "llama-3.3-70b-versatile"
   temperatura: 0.7
   max_tokens: 300
   prompt_sistema: |

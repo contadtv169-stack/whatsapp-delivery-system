@@ -22,8 +22,7 @@ export interface ElevenLabs {
   similarity_boost: number
 }
 
-export interface IA {
-  provider: string
+export interface Groq {
   api_key: string
   model: string
   temperatura: number
@@ -70,7 +69,7 @@ export interface Config {
   empresa: Empresa
   whatsapp: WhatsApp
   elevenlabs: ElevenLabs
-  ia: IA
+  groq: Groq
   cardapio: Cardapio
   avaliacoes: Avaliacoes
   pagamento: Pagamento
