@@ -62,10 +62,6 @@ export async function iniciarBot(): Promise<void> {
       async (buffer) => {
         const media = new MessageMedia("audio/ogg", buffer.toString("base64"))
         await client!.sendMessage(numero, media, { sendAudioAsVoice: true })
-      },
-      async (url, legenda) => {
-        const media = await MessageMedia.fromUrl(url)
-        await client!.sendMessage(numero, media, { caption: legenda })
       }
     )
   })

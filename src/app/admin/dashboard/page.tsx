@@ -92,6 +92,7 @@ export default function AdminDashboard() {
             { id: "groq", label: "Groq & Voz" },
             { id: "empresa", label: "Empresa" },
             { id: "avaliacoes", label: "Avaliações" },
+            { id: "pagamento", label: "Pagamento" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -290,6 +291,61 @@ export default function AdminDashboard() {
                 onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, link_manual: e.target.value } })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
+            </div>
+          </div>
+        )}
+
+        {activeTab === "pagamento" && (
+          <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
+            <h2 className="text-xl font-bold mb-4">💳 Pagamento - Krypt Pay (PIX)</h2>
+            <div className="bg-green-50 border border-green-200 rounded-lg p-4 text-sm text-green-700 mb-4">
+              Integração com Krypt Pay para cobranças PIX automáticas.
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Base URL</label>
+              <input
+                value={config.pagamento.kryptpay.base_url || ""}
+                onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, kryptpay: { ...config.pagamento.kryptpay, base_url: e.target.value } } })}
+                className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Client ID (ci)</label>
+              <input
+                value={config.pagamento.kryptpay.ci || ""}
+                onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, kryptpay: { ...config.pagamento.kryptpay, ci: e.target.value } } })}
+                className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Client Secret (cs)</label>
+              <input
+                type="password"
+                value={config.pagamento.kryptpay.cs || ""}
+                onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, kryptpay: { ...config.pagamento.kryptpay, cs: e.target.value } } })}
+                className="w-full px-3 py-2 border rounded-lg"
+              />
+            </div>
+            <div className="bg-gray-50 rounded-lg p-4 text-sm text-gray-600 mt-4">
+              <p className="font-medium mb-2">📋 Testar integração:</p>
+              <button
+                onClick={async () => {
+                  const r = await fetch("/api/pix", {
+                    method: "POST",
+                    headers: { "Content-Type": "application/json" },
+                    body: JSON.stringify({ action: "create", amount: 1, payerName: "Teste", payerDocument: "00000000000", description: "Teste integração" }),
+                  })
+                  const d = await r.json()
+                  if (d.success) {
+                    setMsg(`✅ PIX criado! Copia e cola: ${d.data.copyPaste.substring(0, 30)}...`)
+                  } else {
+                    setMsg("❌ Erro ao criar PIX. Verifique as credenciais.")
+                  }
+                }}
+                className="bg-green-600 hover:bg-green-700 text-white px-4 py-2 rounded-lg text-sm"
+              >
+                Criar PIX de Teste (R$ 1,00)
+              </button>
             </div>
           </div>
         )}

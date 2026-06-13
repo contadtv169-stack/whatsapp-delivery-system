@@ -54,10 +54,17 @@ export interface Avaliacoes {
   mensagem: string
 }
 
+export interface KryptPay {
+  ci: string
+  cs: string
+  base_url: string
+}
+
 export interface Pagamento {
   ativar: boolean
   link_manual: string
   mensagem: string
+  kryptpay: KryptPay
 }
 
 export interface Admin {
@@ -95,4 +102,17 @@ export interface Pedido {
   forma_pagamento: string
   observacao: string
   criado_em: Date
+}
+
+export interface PixCobranca {
+  transactionId: string
+  amount: number
+  fee: number
+  netAmount: number
+  status: "pending" | "paid" | "expired" | "failed"
+  qrCodeBase64: string
+  qrCodeUrl: string
+  copyPaste: string
+  paymentLink: string
+  expiresAt: string
 }

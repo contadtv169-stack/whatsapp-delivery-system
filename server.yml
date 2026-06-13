@@ -141,6 +141,10 @@ pagamento:
     Chave PIX: {telefone}
     
     Link para pagamento online: {link}
+  kryptpay:
+    ci: "krypt_ci_49e0355123ad4d54fa"
+    cs: ""
+    base_url: "https://kryptgateway.netlify.app"
 
 admin:
   senha: "1101112"

@@ -30,8 +30,7 @@ export async function processarMensagemWhatsApp(
   numero: string,
   mensagem: string,
   enviarTexto: (texto: string) => Promise<void>,
-  enviarAudio: (buffer: Buffer) => Promise<void>,
-  _enviarImagem?: (url: string, legenda?: string) => Promise<void>
+  enviarAudio: (buffer: Buffer) => Promise<void>
 ): Promise<void> {
   const config = getConfig()
   const sessao = getSession(numero)
