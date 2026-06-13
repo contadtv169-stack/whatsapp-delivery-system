@@ -1,7 +1,6 @@
-import { getConfig, formatPrompt } from "./config"
+import { getConfig } from "./config"
 import { gerarRespostaIA, getMensagemCardapio, getMensagemAvaliacao, getMensagemPagamento, getMensagemBemVindo } from "./ai"
 import { textToSpeech } from "./elevenlabs"
-import type { Mensagem } from "@/types"
 
 interface ClienteSessao {
   numero: string
@@ -31,7 +30,7 @@ export async function processarMensagemWhatsApp(
   mensagem: string,
   enviarTexto: (texto: string) => Promise<void>,
   enviarAudio: (buffer: Buffer) => Promise<void>,
-  enviarImagem: (url: string, legenda?: string) => Promise<void>
+  _enviarImagem?: (url: string, legenda?: string) => Promise<void>
 ): Promise<void> {
   const config = getConfig()
   const sessao = getSession(numero)

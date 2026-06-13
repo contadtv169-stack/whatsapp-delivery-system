@@ -57,7 +57,7 @@ export async function gerarRespostaIA(mensagem: string, historico: {role: string
 
   const cardapioTexto = montarCardapioTexto()
 
-  const messages: any[] = [
+  const messages: { role: string; content: string }[] = [
     { role: "system", content: `${promptSistema}\n\n${cardapioTexto}` },
     ...historico.slice(-10),
     { role: "user", content: mensagem },
@@ -72,8 +72,8 @@ export async function gerarRespostaIA(mensagem: string, historico: {role: string
     })
 
     return response.choices[0]?.message?.content || "Desculpe, não entendi. Pode repetir?"
-  } catch (error: any) {
-    console.error("Erro na IA:", error.message)
+  } catch (error: unknown) {
+    console.error("Erro na IA:", error instanceof Error ? error.message : String(error))
     return "❌ Erro ao processar sua mensagem. Tente novamente."
   }
 }

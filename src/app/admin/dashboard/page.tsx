@@ -2,14 +2,19 @@
 
 import { useEffect, useState } from "react"
 import { useRouter } from "next/navigation"
+import Image from "next/image"
+import type { Config } from "@/types"
+
+type Categoria = Config["cardapio"]["categorias"][number]
+type ItemCardapio = Categoria["itens"][number]
 
 export default function AdminDashboard() {
   const router = useRouter()
   const [activeTab, setActiveTab] = useState("config")
-  const [config, setConfig] = useState<any>(null)
+  const [config, setConfig] = useState<Config | null>(null)
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
-  const [whatsappStatus, setWhatsappStatus] = useState<any>(null)
+  const [whatsappStatus, setWhatsappStatus] = useState<{ status: string; qrCode?: string } | null>(null)
   const [msg, setMsg] = useState("")
 
   useEffect(() => {
@@ -52,13 +57,13 @@ export default function AdminDashboard() {
     setSaving(false)
   }
 
-  function updateNested(obj: any, path: string, value: any) {
+  function updateNested(obj: Record<string, unknown>, path: string, value: unknown): Record<string, unknown> {
     const keys = path.split(".")
-    let current = { ...obj }
-    let ref = current
+    const current = { ...obj }
+    let ref = current as Record<string, unknown>
     for (let i = 0; i < keys.length - 1; i++) {
-      ref[keys[i]] = { ...ref[keys[i]] }
-      ref = ref[keys[i]]
+      ref[keys[i]] = { ...(ref[keys[i]] as Record<string, unknown>) }
+      ref = ref[keys[i]] as Record<string, unknown>
     }
     ref[keys[keys.length - 1]] = value
     return current
@@ -112,7 +117,7 @@ export default function AdminDashboard() {
               {whatsappStatus?.qrCode && (
                 <div className="mt-4">
                   <p className="text-sm text-gray-500 mb-2">Escaneie o QR Code com o WhatsApp:</p>
-                  <img src={whatsappStatus.qrCode} alt="QR Code" className="w-48 h-48" />
+                  <Image src={whatsappStatus.qrCode} alt="QR Code" width={192} height={192} className="w-48 h-48" />
                 </div>
               )}
             </div>
@@ -122,20 +127,20 @@ export default function AdminDashboard() {
         {activeTab === "empresa" && (
           <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
             <h2 className="text-xl font-bold mb-4">🏢 Empresa</h2>
-            {[
-              ["empresa.nome", "Nome da Empresa", config.empresa?.nome],
-              ["empresa.descricao", "Descrição", config.empresa?.descricao],
-              ["empresa.telefone", "Telefone", config.empresa?.telefone],
-              ["empresa.endereco", "Endereço", config.empresa?.endereco],
-              ["empresa.horario_funcionamento", "Horário", config.empresa?.horario_funcionamento],
-              ["empresa.cor_primaria", "Cor Primária", config.empresa?.cor_primaria],
-              ["empresa.cor_secundaria", "Cor Secundária", config.empresa?.cor_secundaria],
-            ].map(([path, label, value]) => (
+            {([
+              ["empresa.nome", "Nome da Empresa", config.empresa.nome] as const,
+              ["empresa.descricao", "Descrição", config.empresa.descricao],
+              ["empresa.telefone", "Telefone", config.empresa.telefone],
+              ["empresa.endereco", "Endereço", config.empresa.endereco],
+              ["empresa.horario_funcionamento", "Horário", config.empresa.horario_funcionamento],
+              ["empresa.cor_primaria", "Cor Primária", config.empresa.cor_primaria],
+              ["empresa.cor_secundaria", "Cor Secundária", config.empresa.cor_secundaria],
+            ] as [string, string, string][]).map(([path, label]) => (
               <div key={path}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                 <input
-                  value={value || ""}
-                  onChange={(e) => setConfig(updateNested(config, path, e.target.value))}
+                  value={getNested(config, path) as string || ""}
+                  onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, path, e.target.value) as unknown as Config)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
@@ -147,18 +152,18 @@ export default function AdminDashboard() {
           <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
             <h2 className="text-xl font-bold mb-4">🧠 Groq & 🎙️ Voz</h2>
             <h3 className="font-semibold text-gray-700 mt-4">Groq (IA)</h3>
-            {[
-              ["groq.api_key", "API Key Groq", config.groq?.api_key],
-              ["groq.model", "Modelo (ex: llama-3.3-70b-versatile)", config.groq?.model],
-              ["groq.temperatura", "Temperatura", config.groq?.temperatura?.toString()],
-              ["groq.max_tokens", "Max Tokens", config.groq?.max_tokens?.toString()],
-            ].map(([path, label, value]) => (
+            {([
+              ["groq.api_key", "API Key Groq", config.groq.api_key],
+              ["groq.model", "Modelo (ex: llama-3.3-70b-versatile)", config.groq.model],
+              ["groq.temperatura", "Temperatura", String(config.groq.temperatura)],
+              ["groq.max_tokens", "Max Tokens", String(config.groq.max_tokens)],
+            ] as [string, string, string][]).map(([path, label]) => (
               <div key={path}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                 <input
                   type={path.includes("api_key") ? "password" : "text"}
-                  value={value || ""}
-                  onChange={(e) => setConfig(updateNested(config, path, path.includes("temperatura") || path.includes("max_tokens") ? Number(e.target.value) : e.target.value))}
+                  value={getNested(config, path) as string || ""}
+                  onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, path, path.includes("temperatura") || path.includes("max_tokens") ? Number(e.target.value) : e.target.value) as unknown as Config)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
@@ -166,25 +171,25 @@ export default function AdminDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Prompt do Sistema</label>
               <textarea
-                value={config.groq?.prompt_sistema || ""}
-                onChange={(e) => setConfig(updateNested(config, "groq.prompt_sistema", e.target.value))}
+                value={config.groq.prompt_sistema || ""}
+                onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, "groq.prompt_sistema", e.target.value) as unknown as Config)}
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg h-32"
               />
             </div>
             <h3 className="font-semibold text-gray-700 mt-4">ElevenLabs</h3>
-            {[
-              ["elevenlabs.api_key", "API Key ElevenLabs", config.elevenlabs?.api_key],
-              ["elevenlabs.voice_id", "Voice ID", config.elevenlabs?.voice_id],
-              ["elevenlabs.model", "Modelo", config.elevenlabs?.model],
-              ["elevenlabs.stability", "Estabilidade", config.elevenlabs?.stability?.toString()],
-              ["elevenlabs.similarity_boost", "Similaridade", config.elevenlabs?.similarity_boost?.toString()],
-            ].map(([path, label, value]) => (
+            {([
+              ["elevenlabs.api_key", "API Key ElevenLabs", config.elevenlabs.api_key],
+              ["elevenlabs.voice_id", "Voice ID", config.elevenlabs.voice_id],
+              ["elevenlabs.model", "Modelo", config.elevenlabs.model],
+              ["elevenlabs.stability", "Estabilidade", String(config.elevenlabs.stability)],
+              ["elevenlabs.similarity_boost", "Similaridade", String(config.elevenlabs.similarity_boost)],
+            ] as [string, string, string][]).map(([path, label]) => (
               <div key={path}>
                 <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                 <input
                   type={path.includes("api_key") ? "password" : "text"}
-                  value={value || ""}
-                  onChange={(e) => setConfig(updateNested(config, path, path.includes("stability") || path.includes("similarity") ? Number(e.target.value) : e.target.value))}
+                  value={getNested(config, path) as string || ""}
+                  onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, path, path.includes("stability") || path.includes("similarity") ? Number(e.target.value) : e.target.value) as unknown as Config)}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                 />
               </div>
@@ -195,12 +200,12 @@ export default function AdminDashboard() {
         {activeTab === "cardapio" && (
           <div className="bg-white rounded-xl p-6 shadow-sm">
             <h2 className="text-xl font-bold mb-4">🍽️ Cardápio</h2>
-            {config.cardapio?.categorias?.map((cat: any, ci: number) => (
+            {config.cardapio.categorias.map((cat: Categoria, ci: number) => (
               <div key={ci} className="mb-6 p-4 border border-gray-200 rounded-lg">
                 <h3 className="font-semibold text-lg mb-3">
                   {cat.emoji} {cat.nome}
                 </h3>
-                {cat.itens?.map((item: any, ii: number) => (
+                {cat.itens.map((item: ItemCardapio, ii: number) => (
                   <div key={ii} className="grid grid-cols-3 gap-3 mb-2 items-center">
                     <input
                       value={item.nome}
@@ -246,8 +251,8 @@ export default function AdminDashboard() {
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={config.avaliacoes?.ativar || false}
-                onChange={(e) => setConfig(updateNested(config, "avaliacoes.ativar", e.target.checked))}
+                checked={config.avaliacoes.ativar || false}
+                onChange={(e) => setConfig({ ...config, avaliacoes: { ...config.avaliacoes, ativar: e.target.checked } })}
                 className="w-5 h-5"
               />
               <span>Ativar Avaliações</span>
@@ -255,16 +260,16 @@ export default function AdminDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Link de Avaliação</label>
               <input
-                value={config.avaliacoes?.link || ""}
-                onChange={(e) => setConfig(updateNested(config, "avaliacoes.link", e.target.value))}
+                value={config.avaliacoes.link || ""}
+                onChange={(e) => setConfig({ ...config, avaliacoes: { ...config.avaliacoes, link: e.target.value } })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem de Avaliação</label>
               <textarea
-                value={config.avaliacoes?.mensagem || ""}
-                onChange={(e) => setConfig(updateNested(config, "avaliacoes.mensagem", e.target.value))}
+                value={config.avaliacoes.mensagem || ""}
+                onChange={(e) => setConfig({ ...config, avaliacoes: { ...config.avaliacoes, mensagem: e.target.value } })}
                 className="w-full px-3 py-2 border rounded-lg h-24"
               />
             </div>
@@ -272,8 +277,8 @@ export default function AdminDashboard() {
             <label className="flex items-center gap-2">
               <input
                 type="checkbox"
-                checked={config.pagamento?.ativar || false}
-                onChange={(e) => setConfig(updateNested(config, "pagamento.ativar", e.target.checked))}
+                checked={config.pagamento.ativar || false}
+                onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, ativar: e.target.checked } })}
                 className="w-5 h-5"
               />
               <span>Ativar Pagamento</span>
@@ -281,8 +286,8 @@ export default function AdminDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Link de Pagamento</label>
               <input
-                value={config.pagamento?.link_manual || ""}
-                onChange={(e) => setConfig(updateNested(config, "pagamento.link_manual", e.target.value))}
+                value={config.pagamento.link_manual || ""}
+                onChange={(e) => setConfig({ ...config, pagamento: { ...config.pagamento, link_manual: e.target.value } })}
                 className="w-full px-3 py-2 border rounded-lg"
               />
             </div>
@@ -300,8 +305,8 @@ export default function AdminDashboard() {
                 <div key={path}>
                   <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
                   <input
-                    value={getNested(config, path) || ""}
-                    onChange={(e) => setConfig(updateNested(config, path, e.target.value))}
+                    value={getNested(config, path) as string || ""}
+                    onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, path, e.target.value) as unknown as Config)}
                     className="w-full px-3 py-2 border border-gray-300 rounded-lg"
                   />
                 </div>
@@ -310,8 +315,8 @@ export default function AdminDashboard() {
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem de Boas-Vindas</label>
               <textarea
-                value={config.whatsapp?.mensagem_bem_vindo || ""}
-                onChange={(e) => setConfig(updateNested(config, "whatsapp.mensagem_bem_vindo", e.target.value))}
+                value={config.whatsapp.mensagem_bem_vindo || ""}
+                onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, "whatsapp.mensagem_bem_vindo", e.target.value) as unknown as Config)}
                 className="w-full px-3 py-2 border rounded-lg h-32"
               />
             </div>
@@ -332,6 +337,9 @@ export default function AdminDashboard() {
   )
 }
 
-function getNested(obj: any, path: string): any {
-  return path.split(".").reduce((acc, key) => acc?.[key], obj)
+function getNested(obj: Record<string, unknown>, path: string): unknown {
+  return path.split(".").reduce((acc: unknown, key: string) => {
+    if (acc && typeof acc === "object") return (acc as Record<string, unknown>)[key]
+    return undefined
+  }, obj)
 }

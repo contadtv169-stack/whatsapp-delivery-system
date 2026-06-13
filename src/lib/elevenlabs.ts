@@ -31,12 +31,13 @@ export async function textToSpeech(texto: string): Promise<Buffer | null> {
     )
 
     return Buffer.from(response.data)
-  } catch (error: any) {
-    console.error("Erro no ElevenLabs:", error?.response?.data || error.message)
+  } catch (error: unknown) {
+    console.error("Erro no ElevenLabs:", error instanceof Error ? error.message : String(error))
     return null
   }
 }
 
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export async function getVoices(): Promise<any[]> {
   const config = getConfig()
   const { api_key } = config.elevenlabs
