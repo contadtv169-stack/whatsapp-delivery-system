@@ -19,7 +19,7 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Erro ao gerar áudio" }, { status: 500 })
   }
 
-  return new NextResponse(audio, {
+  return new NextResponse(new Uint8Array(audio), {
     headers: {
       "Content-Type": "audio/mpeg",
       "Content-Length": audio.length.toString(),
