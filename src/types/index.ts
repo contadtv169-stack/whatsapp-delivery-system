@@ -35,6 +35,7 @@ export interface ItemCardapio {
   descricao: string
   preco: number
   imagem: string
+  video?: string
 }
 
 export interface Categoria {

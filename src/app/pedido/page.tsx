@@ -1,6 +1,7 @@
 "use client"
 
 import { useEffect, useState } from "react"
+import Link from "next/link"
 import type { Config, CarrinhoItem } from "@/types"
 
 export default function PedidoPage() {
@@ -178,6 +179,24 @@ export default function PedidoPage() {
           </button>
         </div>
       )}
+
+      {/* Bottom Menu Mobile */}
+      <nav className="fixed bottom-0 left-0 right-0 bg-white border-t shadow-2xl z-50 md:hidden">
+        <div className="flex justify-around py-2">
+          <Link href="/" className="flex flex-col items-center text-gray-500 text-xs">
+            <span className="text-xl">🏠</span> Início
+          </Link>
+          <Link href="/menu" className="flex flex-col items-center text-gray-500 text-xs">
+            <span className="text-xl">🍽️</span> Cardápio
+          </Link>
+          <Link href="/pedido" className="flex flex-col items-center text-orange-500 text-xs">
+            <span className="text-xl">🛒</span> Pedir
+          </Link>
+          <a href={`https://wa.me/${config?.empresa.telefone}`} target="_blank" className="flex flex-col items-center text-gray-500 text-xs">
+            <span className="text-xl">💬</span> WhatsApp
+          </a>
+        </div>
+      </nav>
     </div>
   )
 }

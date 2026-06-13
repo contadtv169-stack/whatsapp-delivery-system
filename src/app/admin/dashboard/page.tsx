@@ -208,39 +208,28 @@ export default function AdminDashboard() {
                 <h3 className="font-semibold text-lg mb-3">
                   {cat.emoji} {cat.nome}
                 </h3>
-                {cat.itens.map((item: ItemCardapio, ii: number) => (
-                  <div key={ii} className="grid grid-cols-3 gap-3 mb-2 items-center">
-                    <input
-                      value={item.nome}
-                      onChange={(e) => {
-                        const c = { ...config }
-                        c.cardapio.categorias[ci].itens[ii].nome = e.target.value
-                        setConfig(c)
-                      }}
-                      className="px-2 py-1 border rounded"
-                      placeholder="Nome"
-                    />
-                    <input
-                      value={item.descricao}
-                      onChange={(e) => {
-                        const c = { ...config }
-                        c.cardapio.categorias[ci].itens[ii].descricao = e.target.value
-                        setConfig(c)
-                      }}
-                      className="px-2 py-1 border rounded"
-                      placeholder="Descrição"
-                    />
-                    <input
-                      type="number"
-                      value={item.preco}
-                      onChange={(e) => {
-                        const c = { ...config }
-                        c.cardapio.categorias[ci].itens[ii].preco = Number(e.target.value)
-                        setConfig(c)
-                      }}
-                      className="px-2 py-1 border rounded"
-                      placeholder="Preço"
-                    />
+                  {cat.itens.map((item: ItemCardapio, ii: number) => (
+                  <div key={ii} className="border border-gray-100 rounded-lg p-3 mb-3">
+                    <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 mb-2">
+                      <input value={item.nome}
+                        onChange={(e) => { const c = { ...config }; c.cardapio.categorias[ci].itens[ii].nome = e.target.value; setConfig(c) }}
+                        className="px-2 py-1 border rounded" placeholder="Nome" />
+                      <input value={item.descricao}
+                        onChange={(e) => { const c = { ...config }; c.cardapio.categorias[ci].itens[ii].descricao = e.target.value; setConfig(c) }}
+                        className="px-2 py-1 border rounded" placeholder="Descrição" />
+                      <input type="number" value={item.preco}
+                        onChange={(e) => { const c = { ...config }; c.cardapio.categorias[ci].itens[ii].preco = Number(e.target.value); setConfig(c) }}
+                        className="px-2 py-1 border rounded" placeholder="Preço" />
+                    </div>
+                    <div className="grid grid-cols-2 gap-3">
+                      <input value={item.imagem || ""}
+                        onChange={(e) => { const c = { ...config }; c.cardapio.categorias[ci].itens[ii].imagem = e.target.value; setConfig(c) }}
+                        className="px-2 py-1 border rounded text-sm" placeholder="URL da Imagem" />
+                      <input value={item.video || ""}
+                        onChange={(e) => { const c = { ...config }; c.cardapio.categorias[ci].itens[ii].video = e.target.value; setConfig(c) }}
+                        className="px-2 py-1 border rounded text-sm" placeholder="URL do Vídeo (YouTube)" />
+                    </div>
+                    {item.imagem && <img src={item.imagem} alt={item.nome} className="h-16 w-16 object-cover rounded mt-2" />}
                   </div>
                 ))}
               </div>

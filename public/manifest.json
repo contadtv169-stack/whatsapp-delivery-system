@@ -1,0 +1,15 @@
+{
+  "name": "WhatsApp Delivery",
+  "short_name": "Delivery",
+  "description": "Peça delivery pelo WhatsApp com IA",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#FF6B35",
+  "orientation": "portrait",
+  "categories": ["food", "business"],
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
