@@ -337,7 +337,7 @@ export default function AdminDashboard() {
   )
 }
 
-function getNested(obj: Record<string, unknown>, path: string): unknown {
+function getNested(obj: unknown, path: string): unknown {
   return path.split(".").reduce((acc: unknown, key: string) => {
     if (acc && typeof acc === "object") return (acc as Record<string, unknown>)[key]
     return undefined
