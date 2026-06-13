@@ -51,8 +51,9 @@ fi
 
 # 7. Install deps and build
 echo "[7/8] Instalando dependências e buildando..."
-npm install --omit=dev
+npm install
 npm run build
+npm prune --omit=dev
 
 # 8. Start with PM2 (24/7)
 echo "[8/8] Iniciando serviço 24/7..."
