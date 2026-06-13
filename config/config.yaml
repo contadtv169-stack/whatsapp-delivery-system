@@ -1,0 +1,148 @@
+empresa:
+  nome: "Minha Empresa Delivery"
+  descricao: "Delivery de comidas e bebidas"
+  telefone: "5511999999999"
+  endereco: "Rua Exemplo, 123 - Centro"
+  horario_funcionamento: "24 horas"
+  logo: "/logo.png"
+  cor_primaria: "#FF6B35"
+  cor_secundaria: "#004E89"
+
+whatsapp:
+  session_path: "./whatsapp-session"
+  mensagem_bem_vindo: |
+    Olá! *Bem-vindo ao {nome}* 🚀
+    
+    Funcionamos *24 horas por dia*!
+    
+    Escolha uma opção:
+    1️⃣ - Ver Cardápio
+    2️⃣ - Fazer Pedido
+    3️⃣ - Falar com Atendente
+    4️⃣ - Formas de Pagamento
+    5️⃣ - Avaliar Serviço
+
+elevenlabs:
+  api_key: ""
+  voice_id: "21m00Tcm4TlvDq8ikWAM"
+  model: "eleven_multilingual_v2"
+  stability: 0.5
+  similarity_boost: 0.75
+
+ia:
+  provider: "openai"
+  api_key: ""
+  model: "gpt-4o-mini"
+  temperatura: 0.7
+  max_tokens: 300
+  prompt_sistema: |
+    Você é um atendente virtual da empresa {nome}.
+    
+    REGRAS IMPORTANTES:
+    - Funcionamos 24 horas por dia, todos os dias
+    - Seja educado, profissional e simpático
+    - Ajude clientes com pedidos e dúvidas do cardápio
+    - Informe sobre formas de pagamento
+    - Quando finalizar um pedido, peça avaliação
+    - Não invente informações que não estão no cardápio
+    - Se não souber responder, direcione para atendente humano
+    
+    Sempre responda de forma concisa e direta.
+
+cardapio:
+  moeda: "R$"
+  categorias:
+    - nome: "Pizzas"
+      emoji: "🍕"
+      itens:
+        - nome: "Mussarela"
+          descricao: "Molho especial, mussarela, tomate e orégano"
+          preco: 35.90
+          imagem: ""
+        - nome: "Calabresa"
+          descricao: "Molho especial, calabresa, cebola e azeitona"
+          preco: 38.90
+          imagem: ""
+        - nome: "Frango com Catupiry"
+          descricao: "Molho, frango desfiado, catupiry e milho"
+          preco: 42.90
+          imagem: ""
+        - nome: "Portuguesa"
+          descricao: "Molho, presunto, mussarela, ovos, cebola e ervilha"
+          preco: 40.90
+          imagem: ""
+
+    - nome: "Hambúrgueres"
+      emoji: "🍔"
+      itens:
+        - nome: "X-Tudo"
+          descricao: "Pão, hambúrguer, queijo, alface, tomate, ovo e batata"
+          preco: 25.90
+          imagem: ""
+        - nome: "X-Salada"
+          descricao: "Pão, hambúrguer, queijo, alface e tomate"
+          preco: 18.90
+          imagem: ""
+        - nome: "X-Bacon"
+          descricao: "Pão, hambúrguer, queijo, bacon crocante e salada"
+          preco: 28.90
+          imagem: ""
+
+    - nome: "Bebidas"
+      emoji: "🥤"
+      itens:
+        - nome: "Refrigerante Lata"
+          descricao: "Coca-Cola, Guaraná, Fanta, Sprite"
+          preco: 6.00
+          imagem: ""
+        - nome: "Suco Natural"
+          descricao: "Laranja, Limão, Maracujá, Acerola"
+          preco: 8.00
+          imagem: ""
+        - nome: "Água Mineral"
+          descricao: "Com ou sem gás 500ml"
+          preco: 3.00
+          imagem: ""
+
+    - nome: "Porções"
+      emoji: "🍟"
+      itens:
+        - nome: "Batata Frita"
+          descricao: "Porção grande de batata frita crocante"
+          preco: 22.90
+          imagem: ""
+        - nome: "Frango Frito"
+          descricao: "Porção de frango frito com molho especial"
+          preco: 32.90
+          imagem: ""
+
+avaliacoes:
+  ativar: true
+  link: "https://forms.gle/seu-formulario-de-avaliacao"
+  mensagem: |
+    🎯 *Sua opinião é muito importante!*
+    
+    Ajude-nos a melhorar avaliando nosso serviço:
+    👉 {link}
+    
+    Desde já agradecemos! ❤️
+
+pagamento:
+  ativar: true
+  link_manual: "https://pagamento.exemplo.com"
+  mensagem: |
+    💳 *Formas de Pagamento*
+    
+    Aceitamos:
+    ✅ Dinheiro
+    ✅ Cartão de Crédito/Débito
+    ✅ PIX
+    ✅ QR Code
+    
+    Chave PIX: {telefone}
+    
+    Link para pagamento online: {link}
+
+admin:
+  senha: "1101112"
+  sessao_expiracao_minutos: 120
