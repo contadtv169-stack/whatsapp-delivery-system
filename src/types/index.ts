@@ -92,16 +92,27 @@ export interface Mensagem {
   lida: boolean
 }
 
+export interface ItemPedido {
+  nome: string
+  quantidade: number
+  preco: number
+  observacao?: string
+}
+
 export interface Pedido {
   id: string
-  cliente: string
-  itens: { nome: string; quantidade: number; preco: number }[]
+  cliente_nome: string
+  cliente_telefone: string
+  cliente_endereco: string
+  itens: ItemPedido[]
   total: number
-  status: "novo" | "preparando" | "saiu_entrega" | "entregue" | "cancelado"
-  endereco_entrega: string
   forma_pagamento: string
+  troco?: number
+  status: "novo" | "confirmado" | "preparando" | "saiu_entrega" | "entregue" | "cancelado"
   observacao: string
-  criado_em: Date
+  origem: "web" | "whatsapp"
+  criado_em: string
+  whatsapp_chat_id?: string
 }
 
 export interface PixCobranca {
@@ -115,4 +126,33 @@ export interface PixCobranca {
   copyPaste: string
   paymentLink: string
   expiresAt: string
+}
+
+export interface CallCenter {
+  ativo: boolean
+  sip_server: string
+  sip_user: string
+  sip_pass: string
+  sip_port: number
+  horario_inicio: string
+  horario_fim: string
+  mensagem_transferencia: string
+}
+
+export interface CarrinhoItem {
+  nome: string
+  quantidade: number
+  preco: number
+}
+
+export interface Config {
+  empresa: Empresa
+  whatsapp: WhatsApp
+  elevenlabs: ElevenLabs
+  groq: Groq
+  cardapio: Cardapio
+  avaliacoes: Avaliacoes
+  pagamento: Pagamento
+  admin: Admin
+  call_center: CallCenter
 }

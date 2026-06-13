@@ -146,6 +146,20 @@ pagamento:
     cs: ""
     base_url: "https://kryptgateway.netlify.app"
 
+call_center:
+  ativo: true
+  sip_server: ""
+  sip_user: ""
+  sip_pass: ""
+  sip_port: 5060
+  horario_inicio: "08:00"
+  horario_fim: "22:00"
+  mensagem_transferencia: |
+    🧑‍💼 *Transferindo para atendente humano*
+    
+    Aguarde um momento, por favor.
+    Em breve um de nossos atendentes irá falar com você.
+
 admin:
   senha: "1101112"
   sessao_expiracao_minutos: 120

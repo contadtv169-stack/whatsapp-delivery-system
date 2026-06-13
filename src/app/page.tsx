@@ -34,8 +34,14 @@ export default function Home() {
 
         <div className="flex flex-col sm:flex-row gap-4 justify-center">
           <Link
-            href="/menu"
+            href="/pedido"
             className="bg-orange-500 hover:bg-orange-600 text-white font-semibold px-8 py-3 rounded-xl transition"
+          >
+            Fazer Pedido 🛒
+          </Link>
+          <Link
+            href="/menu"
+            className="bg-gray-100 hover:bg-gray-200 text-gray-800 font-semibold px-8 py-3 rounded-xl transition"
           >
             Ver Cardápio
           </Link>

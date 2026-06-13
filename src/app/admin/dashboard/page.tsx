@@ -93,6 +93,8 @@ export default function AdminDashboard() {
             { id: "empresa", label: "Empresa" },
             { id: "avaliacoes", label: "Avaliações" },
             { id: "pagamento", label: "Pagamento" },
+            { id: "pedidos", label: "Pedidos" },
+            { id: "callcenter", label: "Call Center" },
           ].map((tab) => (
             <button
               key={tab.id}
@@ -350,6 +352,46 @@ export default function AdminDashboard() {
           </div>
         )}
 
+        {activeTab === "pedidos" && <PedidosTab />}
+
+        {activeTab === "callcenter" && (
+          <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
+            <h2 className="text-xl font-bold mb-4">📞 Call Center (SIP)</h2>
+            <div className="bg-blue-50 border border-blue-200 rounded-lg p-4 text-sm text-blue-700 mb-4">
+              Configure os dados SIP para transferir chamadas para atendentes humanos.
+              Quando o robô da IA identificar que precisa de humano, ele transfere a ligação.
+            </div>
+            <label className="flex items-center gap-2">
+              <input type="checkbox" checked={config.call_center?.ativo || false}
+                onChange={(e) => setConfig({ ...config, call_center: { ...config.call_center, ativo: e.target.checked } })}
+                className="w-5 h-5" />
+              <span>Call Center Ativo</span>
+            </label>
+            {[
+              ["call_center.sip_server", "Servidor SIP"],
+              ["call_center.sip_user", "Usuário SIP"],
+              ["call_center.sip_pass", "Senha SIP"],
+              ["call_center.sip_port", "Porta SIP", "text"],
+              ["call_center.horario_inicio", "Horário Início (ex: 08:00)"],
+              ["call_center.horario_fim", "Horário Fim (ex: 22:00)"],
+            ].map(([path, label, type]) => (
+              <div key={path}>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{label}</label>
+                <input type={path.includes("pass") ? "password" : type === "text" ? "text" : "text"}
+                  value={getNested(config, path) as string || ""}
+                  onChange={(e) => setConfig(updateNested(config as unknown as Record<string, unknown>, path, e.target.value) as unknown as Config)}
+                  className="w-full px-3 py-2 border rounded-lg" />
+              </div>
+            ))}
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">Mensagem de Transferência</label>
+              <textarea value={config.call_center?.mensagem_transferencia || ""}
+                onChange={(e) => setConfig({ ...config, call_center: { ...config.call_center, mensagem_transferencia: e.target.value } })}
+                className="w-full px-3 py-2 border rounded-lg h-24" />
+            </div>
+          </div>
+        )}
+
         {activeTab === "config" && (
           <div className="bg-white rounded-xl p-6 shadow-sm space-y-4">
             <h2 className="text-xl font-bold mb-4">⚙️ Configuração Geral</h2>
@@ -389,6 +431,93 @@ export default function AdminDashboard() {
           </button>
         </div>
       </div>
+    </div>
+  )
+}
+
+function PedidosTab() {
+  const [pedidos, setPedidos] = useState<import("@/types").Pedido[]>([])
+  const [filtro, setFiltro] = useState<string>("todos")
+  const [loading, setLoading] = useState(true)
+
+  function carregar() {
+    setLoading(true)
+    const url = filtro === "todos" ? "/api/pedidos?action=listar" : `/api/pedidos?action=listar&status=${filtro}`
+    fetch(url).then((r) => r.json()).then(setPedidos).finally(() => setLoading(false))
+  }
+
+  useEffect(() => { carregar() }, [filtro])
+
+  async function mudarStatus(id: string, status: string) {
+    await fetch("/api/pedidos", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ action: "status", id, status }),
+    })
+    carregar()
+  }
+
+  const cores: Record<string, string> = {
+    novo: "bg-yellow-100 text-yellow-800",
+    confirmado: "bg-blue-100 text-blue-800",
+    preparando: "bg-purple-100 text-purple-800",
+    saiu_entrega: "bg-orange-100 text-orange-800",
+    entregue: "bg-green-100 text-green-800",
+    cancelado: "bg-red-100 text-red-800",
+  }
+
+  if (loading) return <div className="text-center py-8">Carregando pedidos...</div>
+
+  return (
+    <div className="bg-white rounded-xl p-6 shadow-sm">
+      <div className="flex justify-between items-center mb-4">
+        <h2 className="text-xl font-bold">📦 Pedidos ({pedidos.length})</h2>
+        <div className="flex gap-2">
+          {["todos", "novo", "confirmado", "preparando", "saiu_entrega", "entregue"].map((f) => (
+            <button key={f} onClick={() => setFiltro(f)}
+              className={`px-3 py-1 rounded-lg text-sm ${filtro === f ? "bg-gray-900 text-white" : "bg-gray-100"}`}>
+              {f === "todos" ? "Todos" : f.replace("_", " ")}
+            </button>
+          ))}
+        </div>
+      </div>
+
+      {pedidos.length === 0 && <p className="text-gray-400 text-center py-8">Nenhum pedido</p>}
+
+      {pedidos.map((p) => (
+        <div key={p.id} className="border rounded-lg p-4 mb-3">
+          <div className="flex justify-between items-start mb-2">
+            <div>
+              <span className="font-bold">{p.cliente_nome}</span>
+              <span className="text-gray-500 ml-2 text-sm">{p.cliente_telefone}</span>
+            </div>
+            <span className={`px-2 py-1 rounded text-xs font-medium ${cores[p.status] || ""}`}>{p.status}</span>
+          </div>
+          <div className="text-sm text-gray-600 mb-2">{p.cliente_endereco}</div>
+          <div className="text-sm space-y-1 mb-2">
+            {p.itens.map((item, i) => (
+              <div key={i} className="flex justify-between">
+                <span>{item.quantidade}x {item.nome}</span>
+                <span>R$ {(item.preco * item.quantidade).toFixed(2)}</span>
+              </div>
+            ))}
+          </div>
+          <div className="flex justify-between font-bold border-t pt-2 mb-2">
+            <span>Total</span>
+            <span>R$ {p.total.toFixed(2)}</span>
+          </div>
+          <div className="text-xs text-gray-400 mb-3">{p.forma_pagamento} | {new Date(p.criado_em).toLocaleString("pt-BR")}</div>
+          <div className="flex gap-2">
+            {p.status === "novo" && <button onClick={() => mudarStatus(p.id, "confirmado")} className="bg-blue-600 text-white px-3 py-1 rounded text-sm">Confirmar</button>}
+            {p.status === "confirmado" && <button onClick={() => mudarStatus(p.id, "preparando")} className="bg-purple-600 text-white px-3 py-1 rounded text-sm">Preparando</button>}
+            {p.status === "preparando" && <button onClick={() => mudarStatus(p.id, "saiu_entrega")} className="bg-orange-600 text-white px-3 py-1 rounded text-sm">Saiu p/ Entrega</button>}
+            {p.status === "saiu_entrega" && <button onClick={() => mudarStatus(p.id, "entregue")} className="bg-green-600 text-white px-3 py-1 rounded text-sm">Entregue</button>}
+            {p.status !== "entregue" && p.status !== "cancelado" && (
+              <button onClick={() => mudarStatus(p.id, "cancelado")} className="bg-red-600 text-white px-3 py-1 rounded text-sm">Cancelar</button>
+            )}
+          </div>
+        </div>
+      ))}
     </div>
   )
 }
